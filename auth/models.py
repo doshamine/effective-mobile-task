@@ -18,7 +18,7 @@ class Role(models.Model):
     name = models.CharField(max_length=50, unique=True, blank=False, null=False)
     display_name = models.CharField(max_length=50, unique=True, blank=False, null=False)
     description = models.TextField()
-    permissions = models.ManyToManyField('Permission', related_name='roles')
+    permissions = models.ManyToManyField('Permission', through='RolePermissions', related_name='roles')
 
 
 class UserRoles(models.Model):
@@ -42,3 +42,18 @@ class Permission(models.Model):
 
     name = models.CharField(max_length=100, blank=False, null=False)
     description = models.TextField()
+
+
+class RolePermissions(models.Model):
+    __tablename__ = 'role_permissions'
+
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['role', 'permission'],
+                name='uq_role_permissions_role_permission'
+            )
+        ]
