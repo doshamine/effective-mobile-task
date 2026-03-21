@@ -29,12 +29,7 @@ class UserRoles(models.Model):
     valid_until = models.DateTimeField(null=False)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'role'],
-                name='uq_user_roles_user_role'
-            )
-        ]
+        unique_together = ['user', 'role']
 
 
 class Permission(models.Model):
@@ -51,9 +46,5 @@ class RolePermissions(models.Model):
     permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['role', 'permission'],
-                name='uq_role_permissions_role_permission'
-            )
-        ]
+        class Meta:
+            unique_together = ['role', 'permission']
