@@ -9,7 +9,7 @@ class User(models.Model):
     password = models.CharField(max_length=255, blank=False, null=False)
     is_active = models.BooleanField(null=False, default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    roles = models.ManyToManyField('Role', through='UserRoles', related_name='users')
+    role = models.ForeignKey('Role', related_name='users', on_delete=models.PROTECT)
 
 
 class Role(models.Model):
@@ -20,16 +20,8 @@ class Role(models.Model):
     description = models.TextField()
     permissions = models.ManyToManyField('Permission', through='RolePermissions', related_name='roles')
 
-
-class UserRoles(models.Model):
-    __tablename__ = 'user_roles'
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    valid_until = models.DateTimeField(null=False)
-
-    class Meta:
-        unique_together = ['user', 'role']
+    def __str__(self):
+        return self.display_name
 
 
 class Permission(models.Model):
@@ -46,5 +38,4 @@ class RolePermissions(models.Model):
     permission = models.ForeignKey(Permission, on_delete=models.CASCADE)
 
     class Meta:
-        class Meta:
-            unique_together = ['role', 'permission']
+        unique_together = ['role', 'permission']

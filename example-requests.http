@@ -1,0 +1,31 @@
+@BASE_URL = http://localhost:8000/api/v1
+
+###
+
+GET {{BASE_URL}}/users/
+
+###
+
+POST {{BASE_URL}}/users/
+Content-Type: application/json
+
+{
+  "first_name": "Людмила",
+  "last_name": "Петрова",
+  "email": "luda.petrova@example.com",
+  "password": "123",
+  "role": 3
+}
+
+###
+
+PATCH {{BASE_URL}}/users/5/
+Content-Type: application/json
+
+{
+  "password": "1"
+}
+
+###
+
+DELETE {{BASE_URL}}/users/5/
