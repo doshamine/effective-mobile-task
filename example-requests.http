@@ -10,20 +10,22 @@ POST {{BASE_URL}}/users/
 Content-Type: application/json
 
 {
-  "first_name": "Людмила",
+  "first_name": "Люд",
   "last_name": "Петрова",
-  "email": "luda.petrova@example.com",
+  "email": "ludaaa.petrova@example.com",
   "password": "123",
-  "role": 3
+  "password_confirm": "13",
+  "role": 1
 }
 
 ###
 
-PATCH {{BASE_URL}}/users/5/
+PATCH {{BASE_URL}}/users/8/
 Content-Type: application/json
 
 {
-  "password": "1"
+  "password": "12",
+  "password_confirm": "12"
 }
 
 ###

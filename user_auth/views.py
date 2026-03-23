@@ -17,4 +17,3 @@ class UserViewSet(viewsets.ModelViewSet):
         user.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-

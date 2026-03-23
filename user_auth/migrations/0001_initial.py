@@ -8,54 +8,107 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Permission',
+            name="Permission",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("description", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='Role',
+            name="Role",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True)),
-                ('display_name', models.CharField(max_length=50, unique=True)),
-                ('description', models.TextField()),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50, unique=True)),
+                ("display_name", models.CharField(max_length=50, unique=True)),
+                ("description", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='RolePermissions',
+            name="RolePermissions",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('permission', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user_auth.permission')),
-                ('role', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='user_auth.role')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "permission",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="user_auth.permission",
+                    ),
+                ),
+                (
+                    "role",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="user_auth.role"
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('role', 'permission')},
+                "unique_together": {("role", "permission")},
             },
         ),
         migrations.AddField(
-            model_name='role',
-            name='permissions',
-            field=models.ManyToManyField(related_name='roles', through='user_auth.RolePermissions', to='user_auth.permission'),
+            model_name="role",
+            name="permissions",
+            field=models.ManyToManyField(
+                related_name="roles",
+                through="user_auth.RolePermissions",
+                to="user_auth.permission",
+            ),
         ),
         migrations.CreateModel(
-            name='User',
+            name="User",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=50)),
-                ('last_name', models.CharField(max_length=50)),
-                ('email', models.EmailField(max_length=254, unique=True)),
-                ('password', models.CharField(max_length=255)),
-                ('is_active', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('role', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='users', to='user_auth.role')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("first_name", models.CharField(max_length=50)),
+                ("last_name", models.CharField(max_length=50)),
+                ("email", models.EmailField(max_length=254, unique=True)),
+                ("password", models.CharField(max_length=255)),
+                ("is_active", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "role",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="users",
+                        to="user_auth.role",
+                    ),
+                ),
             ],
         ),
     ]

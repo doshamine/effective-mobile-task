@@ -4,33 +4,56 @@ from user_auth.hash import hash_password
 from user_auth.models import User, Role
 
 
+def process_password(validated_data):
+    validated_data.pop("password_confirm")
+
+    if "password" in validated_data:
+        password = validated_data.pop("password")
+        validated_data["password"] = hash_password(password)
+
+    return validated_data
+
+
 class UserSerializer(serializers.ModelSerializer):
+    password_confirm = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "password_confirm",
+            "created_at",
+            "role",
+        ]
         extra_kwargs = {
-            'password': {'write_only': True},
+            "created_at": {"read_only": True},
+            "password": {"write_only": True},
         }
 
+    def validate(self, attrs):
+        password = attrs.get("password")
+        password_confirm = attrs.get("password_confirm")
+
+        if password:
+            if not password_confirm:
+                raise serializers.ValidationError(
+                    {"password_confirm": "Password confirmation required"}
+                )
+            if password != password_confirm:
+                raise serializers.ValidationError(
+                    {"password_confirm": "Passwords do not match"}
+                )
+
+        return attrs
+
     def create(self, validated_data):
-        validated_data.pop('role')
-        role = Role.objects.get(name='user')
-
-        password = validated_data.pop('password')
-        hashed_password = hash_password(password)
-
-        user = User(**validated_data, password=hashed_password, role=role)
-        user.save()
-        return user
+        validated_data = process_password(validated_data)
+        return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        if 'password' in validated_data:
-            password = validated_data.pop('password')
-            hashed_password = hash_password(password)
-            instance.password = hashed_password
-
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-
-        instance.save()
-        return instance
+        validated_data = process_password(validated_data)
+        return super().update(instance, validated_data)
