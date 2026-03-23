@@ -18,6 +18,17 @@ class User(models.Model):
         return super().save(*args, **kwargs)
 
 
+class RefreshToken(models.Model):
+    __tablename__ = "refresh_tokens"
+
+    jti = models.CharField(
+        max_length=36, primary_key=True, unique=True, blank=False, null=False
+    )
+    subject = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="refresh_tokens"
+    )
+
+
 class Role(models.Model):
     __tablename__ = "roles"
 

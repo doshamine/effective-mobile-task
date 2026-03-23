@@ -1,8 +1,24 @@
 @BASE_URL = http://localhost:8000/api/v1
 @ACCESS_TOKEN = access
+@REFRESH_TOKEN = refresh
+
 ###
 
 GET {{BASE_URL}}/users/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+POST {{BASE_URL}}/refresh/
+Content-Type: application/json
+
+{
+  "refresh_token": "{{REFRESH_TOKEN}}"
+}
+
+###
+
+POST {{BASE_URL}}/logout/
 Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###

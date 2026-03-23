@@ -1,14 +1,18 @@
 from datetime import timedelta
 
-import jwt
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from effective_mobile_task import settings
-from user_auth.auth import generate_access_token, generate_refresh_token
+from user_auth.auth import (
+    generate_access_token,
+    generate_refresh_token,
+    get_jti,
+    get_payload,
+)
 from user_auth.hash import check_password
-from user_auth.models import User
+from user_auth.models import User, RefreshToken
 from user_auth.permissions import TokenPermission
 from user_auth.serializers import UserSerializer
 
@@ -30,19 +34,42 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.get(email=request.data['email'])
+        user = User.objects.get(email=request.data["email"])
 
-        if not check_password(request.data['password'], user.password):
+        if not check_password(request.data["password"], user.password):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if not user.is_active:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        access_token = generate_access_token(str(user.id), timedelta(minutes=settings.JWT_ACCESS_MINUTES))
-        refresh_token = generate_refresh_token(str(user.id), timedelta(days=settings.JWT_REFRESH_DAYS))
+        access_token = generate_access_token(
+            str(user.id), timedelta(minutes=settings.JWT_ACCESS_MINUTES)
+        )
+        refresh_token = generate_refresh_token(
+            str(user.id), timedelta(days=settings.JWT_REFRESH_DAYS)
+        )
 
-        return Response({
-            'access_token': access_token,
-            'refresh_token': refresh_token
-        }, status=status.HTTP_200_OK)
+        return Response(
+            {"access_token": access_token, "refresh_token": refresh_token},
+            status=status.HTTP_200_OK,
+        )
 
+
+class RefreshView(APIView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.data.get("refresh_token")
+        payload = get_payload(refresh_token)
+        access_token = generate_access_token(
+            payload["sub"], timedelta(minutes=settings.JWT_ACCESS_MINUTES)
+        )
+
+        return Response({"access_token": access_token}, status=status.HTTP_201_CREATED)
+
+
+class LogoutView(APIView):
+    def post(self, request, *args, **kwargs):
+        access_token = request.headers.get("Authorization").replace("Bearer ", "")
+        payload = get_payload(access_token)
+        RefreshToken.objects.filter(subject=payload["sub"]).delete()
+
+        return Response(status=status.HTTP_200_OK)
