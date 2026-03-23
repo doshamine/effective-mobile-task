@@ -3,11 +3,8 @@ from datetime import timedelta, datetime, timezone
 from typing import Dict, Any
 
 import jwt
-from jwt import InvalidTokenError
-from rest_framework import exceptions
 
 from effective_mobile_task import settings
-from user_auth.models import User
 from user_auth.token_types import TokenType
 
 
@@ -16,8 +13,8 @@ def generate_jti() -> str:
 
 def sign_token(
         type: str, subject: str,
-        payload: Dict[str, Any],
-        ttl: timedelta=None
+        ttl: timedelta=None,
+        payload: Dict[str, Any]=None
 ) -> str:
     if not payload:
         payload = {}
@@ -25,7 +22,7 @@ def sign_token(
     current_timestamp = datetime.now(tz=timezone.utc).timestamp()
 
     data = dict(
-        iss='doshamine',
+        iss=settings.JWT_ISSUER,
         sub=subject,
         type=type,
         jti=generate_jti(),
@@ -40,23 +37,19 @@ def sign_token(
 
 def generate_access_token(
     subject: str,
-    payload: Dict[str, Any]=None,
-    ttl: timedelta=None
+    ttl: timedelta=None,
+    payload: Dict[str, Any]=None
 ) -> str:
-    return sign_token(TokenType.ACCESS.value, subject, payload, ttl)
+    return sign_token(TokenType.ACCESS.value, subject, ttl, payload)
 
 
 def generate_refresh_token(
     subject: str,
-    payload: Dict[str, Any]=None,
-    ttl: timedelta=None
+    ttl: timedelta=None,
+    payload: Dict[str, Any]=None
 ) -> str:
-    return sign_token(TokenType.REFRESH.value, subject, payload, ttl)
+    return sign_token(TokenType.REFRESH.value, subject, ttl, payload)
 
 
-def verify_token(token: str) -> Dict[str, Any]:
+def get_payload(token: str) -> Dict[str, Any]:
     return jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-
-
-def get_sub(token: str) -> str:
-    return verify_token(token)['sub']

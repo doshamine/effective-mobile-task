@@ -26,6 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
+JWT_ISSUER = os.environ.get('JWT_ISSUER', 'issuer')
+JWT_ACCESS_MINUTES = int(os.environ.get('JWT_ACCESS_MINUTES', '5'))
+JWT_REFRESH_DAYS = int(os.environ.get('JWT_REFRESH_DAYS', '1'))
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 

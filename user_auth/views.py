@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import jwt
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -36,8 +38,8 @@ class LoginView(APIView):
         if not user.is_active:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        access_token = generate_access_token(str(user.id))
-        refresh_token = generate_refresh_token(str(user.id))
+        access_token = generate_access_token(str(user.id), timedelta(minutes=settings.JWT_ACCESS_MINUTES))
+        refresh_token = generate_refresh_token(str(user.id), timedelta(days=settings.JWT_REFRESH_DAYS))
 
         return Response({
             'access_token': access_token,
