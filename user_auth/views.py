@@ -1,17 +1,19 @@
 import jwt
-from jwt import InvalidTokenError
-from rest_framework import viewsets, status, exceptions
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from effective_mobile_task import settings
+from user_auth.auth import generate_access_token, generate_refresh_token
 from user_auth.hash import check_password
 from user_auth.models import User
+from user_auth.permissions import TokenPermission
 from user_auth.serializers import UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
+    permission_classes = [TokenPermission]
 
     def get_queryset(self):
         return User.objects.filter(is_active=True)
@@ -24,26 +26,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-def check_token(request):
-    if 'Authorization' not in request.headers:
-        raise exceptions.AuthenticationFailed('Authorization header is required')
-
-    auth_header = request.headers['Authorization']
-
-    if 'Bearer ' not in auth_header:
-        raise exceptions.AuthenticationFailed('Incorrect header format')
-
-    token = auth_header.replace('Bearer ', '')
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-    except InvalidTokenError:
-        raise exceptions.AuthenticationFailed('Invalid token')
-
-    user = User.objects.get(id=payload['sub'])
-    if not user or not user.is_active:
-        raise exceptions.AuthenticationFailed('No such user')
-
-
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
         user = User.objects.get(email=request.data['email'])
@@ -54,9 +36,11 @@ class LoginView(APIView):
         if not user.is_active:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-        token = jwt.encode(payload={'sub': user.id}, key=settings.SECRET_KEY, algorithm='HS256')
+        access_token = generate_access_token(str(user.id))
+        refresh_token = generate_refresh_token(str(user.id))
 
         return Response({
-            'token': token
+            'access_token': access_token,
+            'refresh_token': refresh_token
         }, status=status.HTTP_200_OK)
 

@@ -1,8 +1,9 @@
 @BASE_URL = http://localhost:8000/api/v1
-
+@ACCESS_TOKEN = access
 ###
 
 GET {{BASE_URL}}/users/
+Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
