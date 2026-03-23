@@ -17,7 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from user_auth.views import LoginView
+
+BASE_ROUTE = 'api/v1/'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/', include('user_auth.urls')),
+    path(BASE_ROUTE + 'login/', LoginView.as_view(), name='login'),
+    #path(BASE_ROUTE + 'refresh/', RefreshView.as_view(), name='refresh'),
+    #path(BASE_ROUTE + 'logout/', LogoutView.as_view(), name='logout'),
+    path(BASE_ROUTE, include('user_auth.urls')),
 ]

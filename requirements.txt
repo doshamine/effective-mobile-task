@@ -1,6 +1,15 @@
 asgiref==3.11.1
+bcrypt==5.0.0
+black==26.3.1
+click==8.3.1
 Django==6.0.3
 djangorestframework==3.16.1
+mypy_extensions==1.1.0
+packaging==26.0
+pathspec==1.0.4
+platformdirs==4.9.4
 psycopg2-binary==2.9.11
+PyJWT==2.12.1
 python-dotenv==1.2.2
+pytokens==0.4.1
 sqlparse==0.5.5

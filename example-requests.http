@@ -20,6 +20,16 @@ Content-Type: application/json
 
 ###
 
+POST {{BASE_URL}}/login/
+Content-Type: application/json
+
+{
+  "email": "lu.petrova@example.com",
+  "password": "12"
+}
+
+###
+
 PATCH {{BASE_URL}}/users/8/
 Content-Type: application/json
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from user_auth.hash import hash_password
-from user_auth.models import User, Role
+from user_auth.models import User
 
 
 def process_password(validated_data):
