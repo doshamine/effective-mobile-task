@@ -4,21 +4,15 @@ from jwt import InvalidTokenError
 from rest_framework.permissions import BasePermission
 from rest_framework import exceptions
 
-from user_auth.auth import get_payload
+from user_auth.auth import get_payload, extract_token
 from user_auth.models import User
 from user_auth.token_types import TokenType
 
 
 class TokenPermission(BasePermission):
     def has_permission(self, request, view):
-        if "Authorization" not in request.headers:
-            raise exceptions.AuthenticationFailed("Authorization header is required")
-        auth_header = request.headers["Authorization"]
+        token = extract_token(request.headers)
 
-        if "Bearer " not in auth_header:
-            raise exceptions.AuthenticationFailed("Incorrect header format")
-
-        token = auth_header.replace("Bearer ", "")
         try:
             payload = get_payload(token)
 

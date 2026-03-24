@@ -23,7 +23,7 @@ Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
-POST {{BASE_URL}}/users/
+POST {{BASE_URL}}/register/
 Content-Type: application/json
 
 {
@@ -38,23 +38,26 @@ Content-Type: application/json
 ###
 
 POST {{BASE_URL}}/login/
+Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
 {
-  "email": "lu.petrova@example.com",
-  "password": "12"
+  "email": "ludaa.petrova@example.com",
+  "password": "123"
 }
 
 ###
 
-PATCH {{BASE_URL}}/users/8/
+PATCH {{BASE_URL}}/update/
+Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
 {
-  "password": "12",
-  "password_confirm": "12"
+  "password": "1",
+  "password_confirm": "1"
 }
 
 ###
 
-DELETE {{BASE_URL}}/users/5/
+DELETE {{BASE_URL}}/delete/
+Authorization: Bearer {{ACCESS_TOKEN}}
