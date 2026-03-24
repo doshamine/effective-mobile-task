@@ -2,8 +2,13 @@ from datetime import timedelta
 
 from rest_framework import viewsets, status
 from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, DestroyModelMixin, RetrieveModelMixin, \
-    ListModelMixin
+from rest_framework.mixins import (
+    CreateModelMixin,
+    UpdateModelMixin,
+    DestroyModelMixin,
+    RetrieveModelMixin,
+    ListModelMixin,
+)
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,7 +16,9 @@ from effective_mobile_task import settings
 from user_auth.auth import (
     generate_access_token,
     generate_refresh_token,
-    get_payload, get_user, extract_token,
+    get_payload,
+    get_user,
+    extract_token,
 )
 from user_auth.hash import check_password
 from user_auth.models import User, RefreshToken

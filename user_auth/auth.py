@@ -9,6 +9,7 @@ from user_auth.models import RefreshToken, User
 from user_auth.token_types import TokenType
 from rest_framework import exceptions
 
+
 def generate_jti() -> str:
     return str(uuid.uuid4())
 
@@ -58,9 +59,11 @@ def generate_refresh_token(
 def get_payload(token: str) -> Dict[str, Any]:
     return jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
 
+
 def get_user(token: str) -> User:
     payload = get_payload(token)
-    return User.objects.get(pk=payload['sub'])
+    return User.objects.get(pk=payload["sub"])
+
 
 def extract_token(headers) -> str:
     if "Authorization" not in headers:

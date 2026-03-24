@@ -38,7 +38,6 @@ Content-Type: application/json
 ###
 
 POST {{BASE_URL}}/login/
-Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
 {
@@ -60,4 +59,35 @@ Content-Type: application/json
 ###
 
 DELETE {{BASE_URL}}/delete/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+GET {{BASE_URL}}/mocks/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+GET {{BASE_URL}}/mocks/1
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+POST {{BASE_URL}}/mocks/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{}
+
+###
+
+PATCH {{BASE_URL}}/mocks/1/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{}
+
+###
+
+DELETE {{BASE_URL}}/mocks/1/
 Authorization: Bearer {{ACCESS_TOKEN}}
