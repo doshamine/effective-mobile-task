@@ -63,25 +63,17 @@ Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
-GET {{BASE_URL}}/mocks/
+GET {{BASE_URL}}/items/
 Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
-GET {{BASE_URL}}/mocks/1
+GET {{BASE_URL}}/items/1
 Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
-POST {{BASE_URL}}/mocks/
-Authorization: Bearer {{ACCESS_TOKEN}}
-Content-Type: application/json
-
-{}
-
-###
-
-PATCH {{BASE_URL}}/mocks/1/
+POST {{BASE_URL}}/items/
 Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
@@ -89,5 +81,13 @@ Content-Type: application/json
 
 ###
 
-DELETE {{BASE_URL}}/mocks/1/
+PATCH {{BASE_URL}}/items/1/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{}
+
+###
+
+DELETE {{BASE_URL}}/items/1/
 Authorization: Bearer {{ACCESS_TOKEN}}
