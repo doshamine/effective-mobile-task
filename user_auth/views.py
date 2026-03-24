@@ -6,8 +6,6 @@ from rest_framework.mixins import (
     CreateModelMixin,
     UpdateModelMixin,
     DestroyModelMixin,
-    RetrieveModelMixin,
-    ListModelMixin,
 )
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -28,17 +26,19 @@ from user_auth.serializers import UserSerializer
 
 class BaseUserView(GenericAPIView):
     serializer_class = UserSerializer
-    permission_classes = (TokenPermission,)
 
     def get_queryset(self):
         return User.objects.filter(is_active=True)
 
 
 class RegisterUserView(BaseUserView, CreateModelMixin):
-    pass
+    def post(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
 
 
 class UpdateUserView(BaseUserView, UpdateModelMixin):
+    permission_classes = (TokenPermission,)
+
     def get_object(self) -> User:
         token = extract_token(self.request.headers)
         return get_user(token)
@@ -48,6 +48,8 @@ class UpdateUserView(BaseUserView, UpdateModelMixin):
 
 
 class DeleteUserView(BaseUserView, DestroyModelMixin):
+    permission_classes = (TokenPermission,)
+
     def get_object(self) -> User:
         token = extract_token(self.request.headers)
         return get_user(token)
@@ -61,11 +63,9 @@ class DeleteUserView(BaseUserView, DestroyModelMixin):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
     permission_classes = (TokenPermission,)
-
-    def get_queryset(self):
-        return User.objects.filter(is_active=True)
 
 
 class LoginView(APIView):
@@ -92,25 +92,28 @@ class LoginView(APIView):
 
 
 class RefreshView(APIView):
+
     def post(self, request, *args, **kwargs):
         refresh_token = request.data.get("refresh_token")
         payload = get_payload(refresh_token)
 
-        is_login = RefreshToken.objects.filter(pk=payload["jti"])
+        is_login = RefreshToken.objects.filter(pk=payload.get('jti'))
         if not is_login:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         access_token = generate_access_token(
-            payload["sub"], timedelta(minutes=settings.JWT_ACCESS_MINUTES)
+            payload.get('sub'), timedelta(minutes=settings.JWT_ACCESS_MINUTES)
         )
 
         return Response({"access_token": access_token}, status=status.HTTP_201_CREATED)
 
 
 class LogoutView(APIView):
+    permission_classes = (TokenPermission,)
+
     def post(self, request, *args, **kwargs):
-        access_token = request.headers.get("Authorization").replace("Bearer ", "")
+        access_token = extract_token(request.headers)
         payload = get_payload(access_token)
-        RefreshToken.objects.filter(subject=payload["sub"]).delete()
+        RefreshToken.objects.filter(subject=payload.get('sub')).delete()
 
         return Response(status=status.HTTP_200_OK)

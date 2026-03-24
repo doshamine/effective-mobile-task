@@ -15,7 +15,7 @@ def process_password(validated_data):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password_confirm = serializers.CharField(write_only=True)
+    password_confirm = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
@@ -30,6 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
             "role",
         ]
         extra_kwargs = {
+            "role": {"read_only": True},
             "created_at": {"read_only": True},
             "password": {"write_only": True},
         }

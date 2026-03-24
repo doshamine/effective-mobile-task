@@ -1,6 +1,28 @@
 @BASE_URL = http://localhost:8000/api/v1
-@ACCESS_TOKEN = access
-@REFRESH_TOKEN = refresh
+@ACCESS_TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkb3NoYW1pbmUiLCJzdWIiOiIxMyIsInR5cGUiOiJhY2Nlc3NfdG9rZW4iLCJqdGkiOiJlNzhjN2RmYy1jNTkzLTQ5YjEtOGUyYi1lZjliY2RmZWQ1YmIiLCJpYXQiOjE3NzQzNzU4MjUuMjEyMTcxLCJuYmYiOjE3NzQzNzU4MjUuMjEyMTcxLCJleHAiOjE3NzQzNzYxMjUuMjEyMTcxfQ.MeTYB6CDuaC2o5z2PW9sH51Rbi-f7IsBMQp9aXDrerI
+@REFRESH_TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJkb3NoYW1pbmUiLCJzdWIiOiIxMyIsInR5cGUiOiJyZWZyZXNoX3Rva2VuIiwianRpIjoiZDJmYzQyNGUtZTNlNS00OTEzLWJhODAtNzk1MGYwYzgyNzNkIiwiaWF0IjoxNzc0Mzc1NTc3LjQyNDI4NywibmJmIjoxNzc0Mzc1NTc3LjQyNDI4NywiZXhwIjoxNzc0NDYxOTc3LjQyNDI4N30.KCPTqWN5jPHd5Hknkf-Ngxz6khoWi4Zqy6DrbixbsJM
+
+
+POST {{BASE_URL}}/register/
+Content-Type: application/json
+
+{
+  "first_name": "Люд",
+  "last_name": "Петрова",
+  "email": "ludaaaa.petrova@example.com",
+  "password": "123",
+  "password_confirm": "123"
+}
+
+###
+
+POST {{BASE_URL}}/login/
+Content-Type: application/json
+
+{
+  "email": "ludaaaa.petrova@example.com",
+  "password": "123"
+}
 
 ###
 
@@ -14,35 +36,6 @@ Content-Type: application/json
 
 {
   "refresh_token": "{{REFRESH_TOKEN}}"
-}
-
-###
-
-POST {{BASE_URL}}/logout/
-Authorization: Bearer {{ACCESS_TOKEN}}
-
-###
-
-POST {{BASE_URL}}/register/
-Content-Type: application/json
-
-{
-  "first_name": "Люд",
-  "last_name": "Петрова",
-  "email": "ludaaa.petrova@example.com",
-  "password": "123",
-  "password_confirm": "13",
-  "role": 1
-}
-
-###
-
-POST {{BASE_URL}}/login/
-Content-Type: application/json
-
-{
-  "email": "ludaa.petrova@example.com",
-  "password": "123"
 }
 
 ###
@@ -63,12 +56,17 @@ Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
+POST {{BASE_URL}}/logout/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
 GET {{BASE_URL}}/items/
 Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
-GET {{BASE_URL}}/items/1
+GET {{BASE_URL}}/items/1/
 Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###

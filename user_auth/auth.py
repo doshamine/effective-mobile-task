@@ -1,6 +1,6 @@
 import uuid
 from datetime import timedelta, datetime, timezone
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 import jwt
 
@@ -16,29 +16,31 @@ def generate_jti() -> str:
 
 def get_jti(token: str) -> str:
     payload = get_payload(token)
-    return payload["jti"]
+    return payload.get('jti')
 
 
 def sign_token(
-    type: str, subject: str, ttl: timedelta = None, payload: Dict[str, Any] = None
+    typ: str, subject: str, ttl: timedelta = None, payload: Dict[str, Any] = None
 ) -> str:
-    if not payload:
+    if payload is None:
         payload = {}
+
+    base = dict(payload or {})
 
     current_timestamp = datetime.now(tz=timezone.utc).timestamp()
 
     data = dict(
         iss=settings.JWT_ISSUER,
         sub=subject,
-        type=type,
+        type=typ,
         jti=generate_jti(),
         iat=current_timestamp,
         nbf=payload["nbf"] if payload.get("nbf") else current_timestamp,
     )
     data.update(dict(exp=data["nbf"] + int(ttl.total_seconds()))) if ttl else None
-    payload.update(data)
+    base.update(data)
 
-    return jwt.encode(payload=payload, key=settings.SECRET_KEY, algorithm="HS256")
+    return jwt.encode(payload=base, key=settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 
 def generate_access_token(
@@ -57,21 +59,22 @@ def generate_refresh_token(
 
 
 def get_payload(token: str) -> Dict[str, Any]:
-    return jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
+    return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
 
 
 def get_user(token: str) -> User:
     payload = get_payload(token)
-    return User.objects.get(pk=payload["sub"])
+    return User.objects.get(pk=payload.get('sub'))
 
 
-def extract_token(headers) -> str:
-    if "Authorization" not in headers:
+def extract_token(headers: Dict[str, str]) -> str:
+    auth_header = headers.get('Authorization')
+
+    if not auth_header:
         raise exceptions.AuthenticationFailed("Authorization header is required")
-    auth_header = headers["Authorization"]
 
-    if "Bearer " not in auth_header:
+    if not auth_header.startswith('Bearer '):
         raise exceptions.AuthenticationFailed("Incorrect header format")
 
-    token = auth_header.replace("Bearer ", "")
+    token = auth_header.removeprefix('Bearer ').strip()
     return token
