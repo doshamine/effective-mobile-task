@@ -16,11 +16,11 @@ from user_auth.auth import (
     generate_refresh_token,
     get_payload,
     get_user,
-    extract_token,
+    extract_token, get_sub,
 )
 from user_auth.hash import check_password
 from user_auth.models import User, RefreshToken
-from user_auth.permissions import TokenPermission
+from user_auth.permissions import AccessTokenPermission, RefreshTokenPermission, RolePermission
 from user_auth.serializers import UserSerializer
 
 
@@ -37,7 +37,7 @@ class RegisterUserView(BaseUserView, CreateModelMixin):
 
 
 class UpdateUserView(BaseUserView, UpdateModelMixin):
-    permission_classes = (TokenPermission,)
+    permission_classes = (AccessTokenPermission,)
 
     def get_object(self) -> User:
         token = extract_token(self.request.headers)
@@ -48,7 +48,7 @@ class UpdateUserView(BaseUserView, UpdateModelMixin):
 
 
 class DeleteUserView(BaseUserView, DestroyModelMixin):
-    permission_classes = (TokenPermission,)
+    permission_classes = (AccessTokenPermission,)
 
     def get_object(self) -> User:
         token = extract_token(self.request.headers)
@@ -65,7 +65,7 @@ class DeleteUserView(BaseUserView, DestroyModelMixin):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
-    permission_classes = (TokenPermission,)
+    permission_classes = (AccessTokenPermission, RolePermission, )
 
 
 class LoginView(APIView):
@@ -92,24 +92,20 @@ class LoginView(APIView):
 
 
 class RefreshView(APIView):
+    permission_classes = (RefreshTokenPermission,)
 
     def post(self, request, *args, **kwargs):
         refresh_token = request.data.get("refresh_token")
-        payload = get_payload(refresh_token)
-
-        is_login = RefreshToken.objects.filter(pk=payload.get('jti'))
-        if not is_login:
-            return Response(status=status.HTTP_403_FORBIDDEN)
 
         access_token = generate_access_token(
-            payload.get('sub'), timedelta(minutes=settings.JWT_ACCESS_MINUTES)
+            get_sub(refresh_token), timedelta(minutes=settings.JWT_ACCESS_MINUTES)
         )
 
         return Response({"access_token": access_token}, status=status.HTTP_201_CREATED)
 
 
 class LogoutView(APIView):
-    permission_classes = (TokenPermission,)
+    permission_classes = (AccessTokenPermission,)
 
     def post(self, request, *args, **kwargs):
         access_token = extract_token(request.headers)

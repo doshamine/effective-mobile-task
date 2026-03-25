@@ -19,6 +19,11 @@ def get_jti(token: str) -> str:
     return payload.get('jti')
 
 
+def get_sub(token: str) -> str:
+    payload = get_payload(token)
+    return payload.get('sub')
+
+
 def sign_token(
     typ: str, subject: str, ttl: timedelta = None, payload: Dict[str, Any] = None
 ) -> str:

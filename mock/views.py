@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from mock.constants import MOCK_DATA
-from user_auth.permissions import TokenPermission
+from user_auth.permissions import AccessTokenPermission
 
 
 class MockView(GenericViewSet):
-    permission_classes = (TokenPermission,)
+    permission_classes = (AccessTokenPermission,)
 
     def create(self, request, *args, **kwargs):
         return Response(MOCK_DATA["CREATED"], status=status.HTTP_201_CREATED)
