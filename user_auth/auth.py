@@ -16,12 +16,12 @@ def generate_jti() -> str:
 
 def get_jti(token: str) -> str:
     payload = get_payload(token)
-    return payload.get('jti')
+    return payload.get("jti")
 
 
 def get_sub(token: str) -> str:
     payload = get_payload(token)
-    return payload.get('sub')
+    return payload.get("sub")
 
 
 def sign_token(
@@ -45,7 +45,9 @@ def sign_token(
     data.update(dict(exp=data["nbf"] + int(ttl.total_seconds()))) if ttl else None
     base.update(data)
 
-    return jwt.encode(payload=base, key=settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+    return jwt.encode(
+        payload=base, key=settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+    )
 
 
 def generate_access_token(
@@ -69,17 +71,17 @@ def get_payload(token: str) -> Dict[str, Any]:
 
 def get_user(token: str) -> User:
     payload = get_payload(token)
-    return User.objects.get(pk=payload.get('sub'))
+    return User.objects.get(pk=payload.get("sub"))
 
 
 def extract_token(headers: Dict[str, str]) -> str:
-    auth_header = headers.get('Authorization')
+    auth_header = headers.get("Authorization")
 
     if not auth_header:
         raise exceptions.AuthenticationFailed("Authorization header is required")
 
-    if not auth_header.startswith('Bearer '):
+    if not auth_header.startswith("Bearer "):
         raise exceptions.AuthenticationFailed("Incorrect header format")
 
-    token = auth_header.removeprefix('Bearer ').strip()
+    token = auth_header.removeprefix("Bearer ").strip()
     return token

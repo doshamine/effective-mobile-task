@@ -20,7 +20,7 @@ POST {{BASE_URL}}/login/
 Content-Type: application/json
 
 {
-  "email": "ludaaaaa.petrova@example.com",
+  "email": "ludaa.petrova@example.com",
   "password": "123"
 }
 
@@ -61,6 +61,16 @@ Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
+POST {{BASE_URL}}/items/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "name": "objectss"
+}
+
+###
+
 GET {{BASE_URL}}/items/
 Authorization: Bearer {{ACCESS_TOKEN}}
 
@@ -71,21 +81,15 @@ Authorization: Bearer {{ACCESS_TOKEN}}
 
 ###
 
-POST {{BASE_URL}}/items/
+PATCH {{BASE_URL}}/items/2/
 Authorization: Bearer {{ACCESS_TOKEN}}
 Content-Type: application/json
 
-{}
+{
+  "name": ":-)"
+}
 
 ###
 
-PATCH {{BASE_URL}}/items/1/
-Authorization: Bearer {{ACCESS_TOKEN}}
-Content-Type: application/json
-
-{}
-
-###
-
-DELETE {{BASE_URL}}/items/1/
+DELETE {{BASE_URL}}/items/3/
 Authorization: Bearer {{ACCESS_TOKEN}}

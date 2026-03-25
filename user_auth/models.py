@@ -48,7 +48,12 @@ class User(models.Model):
     password = models.CharField(max_length=255, blank=False, null=False)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    role = models.ForeignKey("Role", related_name="users", on_delete=models.PROTECT, default=get_default_role_pk)
+    role = models.ForeignKey(
+        "Role",
+        related_name="users",
+        on_delete=models.PROTECT,
+        default=get_default_role_pk,
+    )
 
 
 class RefreshToken(models.Model):

@@ -14,13 +14,14 @@ from effective_mobile_task import settings
 from user_auth.auth import (
     generate_access_token,
     generate_refresh_token,
-    get_payload,
-    get_user,
-    extract_token, get_sub,
+)
+from user_auth.authentication import (
+    AccessTokenAuthentication,
+    RefreshTokenAuthentication,
 )
 from user_auth.hash import check_password
 from user_auth.models import User, RefreshToken
-from user_auth.permissions import AccessTokenPermission, RefreshTokenPermission, RolePermission
+from user_auth.permissions import RolePermission
 from user_auth.serializers import UserSerializer
 
 
@@ -37,25 +38,20 @@ class RegisterUserView(BaseUserView, CreateModelMixin):
 
 
 class UpdateUserView(BaseUserView, UpdateModelMixin):
-    permission_classes = (AccessTokenPermission,)
+    authentication_classes = (AccessTokenAuthentication,)
 
     def get_object(self) -> User:
-        token = extract_token(self.request.headers)
-        return get_user(token)
+        return self.request.user
 
     def patch(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
 
 class DeleteUserView(BaseUserView, DestroyModelMixin):
-    permission_classes = (AccessTokenPermission,)
-
-    def get_object(self) -> User:
-        token = extract_token(self.request.headers)
-        return get_user(token)
+    authentication_classes = (AccessTokenAuthentication,)
 
     def delete(self, request, *args, **kwargs):
-        user = self.get_object()
+        user = request.user
         user.is_active = False
         user.save()
 
@@ -65,7 +61,8 @@ class DeleteUserView(BaseUserView, DestroyModelMixin):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter(is_active=True)
     serializer_class = UserSerializer
-    permission_classes = (AccessTokenPermission, RolePermission, )
+    authentication_classes = (AccessTokenAuthentication,)
+    permission_classes = (RolePermission,)
 
 
 class LoginView(APIView):
@@ -92,24 +89,18 @@ class LoginView(APIView):
 
 
 class RefreshView(APIView):
-    permission_classes = (RefreshTokenPermission,)
+    authentication_classes = (RefreshTokenAuthentication,)
 
     def post(self, request, *args, **kwargs):
-        refresh_token = request.data.get("refresh_token")
-
         access_token = generate_access_token(
-            get_sub(refresh_token), timedelta(minutes=settings.JWT_ACCESS_MINUTES)
+            request.auth.get("sub"), timedelta(minutes=settings.JWT_ACCESS_MINUTES)
         )
-
         return Response({"access_token": access_token}, status=status.HTTP_201_CREATED)
 
 
 class LogoutView(APIView):
-    permission_classes = (AccessTokenPermission,)
+    authentication_classes = (AccessTokenAuthentication,)
 
     def post(self, request, *args, **kwargs):
-        access_token = extract_token(request.headers)
-        payload = get_payload(access_token)
-        RefreshToken.objects.filter(subject=payload.get('sub')).delete()
-
+        RefreshToken.objects.filter(subject=request.auth.get("sub")).delete()
         return Response(status=status.HTTP_200_OK)
