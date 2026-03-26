@@ -9,6 +9,7 @@ from rest_framework.mixins import (
 )
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from effective_mobile_task import settings
 from user_auth.auth import (
@@ -20,13 +21,13 @@ from user_auth.authentication import (
     RefreshTokenAuthentication,
 )
 from user_auth.hash import check_password
-from user_auth.models import User, RefreshToken
-from user_auth.permissions import RolePermission
-from user_auth.serializers import UserSerializer
+from user_auth.models import User, RefreshToken, Role, Permission
+from user_auth.permissions import RolePermission, parse_permission
+from user_auth.serializers import UserSerializer, RoleSerializer, PermissionSerializer, AuthSerializer
 
 
 class BaseUserView(GenericAPIView):
-    serializer_class = UserSerializer
+    serializer_class = AuthSerializer
 
     def get_queryset(self):
         return User.objects.filter(is_active=True)
@@ -59,21 +60,67 @@ class DeleteUserView(BaseUserView, DestroyModelMixin):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(is_active=True)
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = (AccessTokenAuthentication,)
     permission_classes = (RolePermission,)
 
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        user = self.request.user
+
+        if self.action == 'list' and self._has_own_only_permission(user):
+            queryset = queryset.filter(id=user.id)
+        return queryset
+
+    def _has_own_only_permission(self, user: User) -> bool:
+        permission = user.role.permissions.filter(name__contains='user:read').first()
+        parts = parse_permission(permission.name)
+
+        if len(parts) == 3 and parts[2] == 'own':
+            return True
+        return False
+
 
 class LoginView(APIView):
     def post(self, request, *args, **kwargs):
-        user = User.objects.get(email=request.data["email"])
+        email = request.data.get("email")
+        password = request.data.get("password")
 
-        if not check_password(request.data["password"], user.password):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        missing_fields = []
+        if email is None:
+            missing_fields.append("email")
+        if password is None:
+            missing_fields.append("password")
+
+        if missing_fields:
+            return Response(
+                {
+                    "detail": "Required fields are missing.",
+                    "missing_fields": missing_fields,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not check_password(password, user.password):
+            return Response(
+                {"detail": "Wrong password."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         if not user.is_active:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "User account is inactive."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         access_token = generate_access_token(
             str(user.id), timedelta(minutes=settings.JWT_ACCESS_MINUTES)
@@ -83,7 +130,10 @@ class LoginView(APIView):
         )
 
         return Response(
-            {"access_token": access_token, "refresh_token": refresh_token},
+            {
+                "access_token": access_token,
+                "refresh_token": refresh_token,
+            },
             status=status.HTTP_200_OK,
         )
 
@@ -104,3 +154,17 @@ class LogoutView(APIView):
     def post(self, request, *args, **kwargs):
         RefreshToken.objects.filter(subject=request.auth.get("sub")).delete()
         return Response(status=status.HTTP_200_OK)
+
+
+class RoleViewSet(ModelViewSet):
+    authentication_classes = (AccessTokenAuthentication,)
+    permission_classes = (RolePermission,)
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+
+
+class PermissionViewSet(ModelViewSet):
+    authentication_classes = (AccessTokenAuthentication,)
+    permission_classes = (RolePermission,)
+    queryset = Permission.objects.all()
+    serializer_class = PermissionSerializer

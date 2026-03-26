@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from user_auth.hash import hash_password
-from user_auth.models import User
+from user_auth.models import User, Role, Permission
 
 
 def process_password(validated_data):
@@ -14,7 +14,7 @@ def process_password(validated_data):
     return validated_data
 
 
-class UserSerializer(serializers.ModelSerializer):
+class AuthSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(write_only=True, required=False)
 
     class Meta:
@@ -26,11 +26,9 @@ class UserSerializer(serializers.ModelSerializer):
             "email",
             "password",
             "password_confirm",
-            "created_at",
-            "role",
+            "created_at"
         ]
         extra_kwargs = {
-            "role": {"read_only": True},
             "created_at": {"read_only": True},
             "password": {"write_only": True},
         }
@@ -58,3 +56,35 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         validated_data = process_password(validated_data)
         return super().update(instance, validated_data)
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "created_at",
+            "role"
+        ]
+        extra_kwargs = {
+            "created_at": {"read_only": True},
+            "password": {"write_only": True},
+        }
+
+
+class PermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = '__all__'
+
+
+class RoleSerializer(serializers.ModelSerializer):
+    permissions = serializers.PrimaryKeyRelatedField(many=True, queryset=Permission.objects.all())
+
+    class Meta:
+        model = Role
+        fields = ("id", "name", "display_name", "description", "permissions")

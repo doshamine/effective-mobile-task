@@ -3,53 +3,61 @@
     "model": "user_auth.Permission",
     "pk": 1,
     "fields": {
-      "name": "user:own:read",
-      "description": "Просмотр только своего профиля"
+      "name": "user:create",
+      "description": "Создание пользователей"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 2,
     "fields": {
-      "name": "user:own:update",
-      "description": "Изменение только своих данных"
+      "name": "user:read:own",
+      "description": "Просмотр только своего профиля"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 3,
     "fields": {
-      "name": "user:own:delete",
-      "description": "Удаление только своего аккаунта"
+      "name": "user:update:own",
+      "description": "Изменение только своих данных"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 4,
     "fields": {
-      "name": "user:all:read",
-      "description": "Просмотр всех пользователей"
+      "name": "user:delete:own",
+      "description": "Удаление только своего аккаунта"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 5,
     "fields": {
-      "name": "user:all:update",
-      "description": "Изменение любых пользователей"
+      "name": "user:read",
+      "description": "Просмотр пользователей"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 6,
     "fields": {
-      "name": "user:all:delete",
-      "description": "Удаление любых пользователей"
+      "name": "user:update",
+      "description": "Изменение пользователей"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 7,
+    "fields": {
+      "name": "user:delete",
+      "description": "Удаление пользователей"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 8,
     "fields": {
       "name": "item:create",
       "description": "Создание объектов"
@@ -57,50 +65,114 @@
   },
   {
     "model": "user_auth.Permission",
-    "pk": 8,
-    "fields": {
-      "name": "item:own:read",
-      "description": "Просмотр только своих объектов"
-    }
-  },
-  {
-    "model": "user_auth.Permission",
     "pk": 9,
     "fields": {
-      "name": "item:own:update",
-      "description": "Изменение только своих объектов"
+      "name": "item:read:own",
+      "description": "Просмотр только своих объектов"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 10,
     "fields": {
-      "name": "item:own:delete",
-      "description": "Удаление только своих объектов"
+      "name": "item:update:own",
+      "description": "Изменение только своих объектов"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 11,
     "fields": {
-      "name": "item:all:read",
-      "description": "Просмотр всех объектов"
+      "name": "item:delete:own",
+      "description": "Удаление только своих объектов"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 12,
     "fields": {
-      "name": "item:all:update",
-      "description": "Изменение любых объектов"
+      "name": "item:read",
+      "description": "Просмотр объектов"
     }
   },
   {
     "model": "user_auth.Permission",
     "pk": 13,
     "fields": {
-      "name": "item:all:delete",
-      "description": "Удаление любых объектов"
+      "name": "item:update",
+      "description": "Изменение объектов"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 14,
+    "fields": {
+      "name": "item:delete",
+      "description": "Удаление объектов"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 15,
+    "fields": {
+      "name": "role:create",
+      "description": "Создание ролей"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 16,
+    "fields": {
+      "name": "role:read",
+      "description": "Просмотр ролей"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 17,
+    "fields": {
+      "name": "role:update",
+      "description": "Изменение ролей"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 18,
+    "fields": {
+      "name": "role:delete",
+      "description": "Удаление ролей"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 19,
+    "fields": {
+      "name": "permission:create",
+      "description": "Создание прав доступа"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 20,
+    "fields": {
+      "name": "permission:read",
+      "description": "Просмотр прав доступа"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 21,
+    "fields": {
+      "name": "permission:update",
+      "description": "Изменение прав доступа"
+    }
+  },
+  {
+    "model": "user_auth.Permission",
+    "pk": 22,
+    "fields": {
+      "name": "permission:delete",
+      "description": "Удаление прав доступа"
     }
   },
   {
@@ -131,20 +203,11 @@
     }
   },
   {
-    "model": "user_auth.Role",
-    "pk": 4,
-    "fields": {
-      "name": "guest",
-      "display_name": "Гость",
-      "description": "Только просмотр объектов"
-    }
-  },
-  {
     "model": "user_auth.RolePermissions",
     "pk": 1,
     "fields": {
       "role": 1,
-      "permission": 4
+      "permission": 1
     }
   },
   {
@@ -176,7 +239,7 @@
     "pk": 5,
     "fields": {
       "role": 1,
-      "permission": 11
+      "permission": 8
     }
   },
   {
@@ -199,13 +262,85 @@
     "model": "user_auth.RolePermissions",
     "pk": 8,
     "fields": {
-      "role": 2,
-      "permission": 2
+      "role": 1,
+      "permission": 14
     }
   },
   {
     "model": "user_auth.RolePermissions",
     "pk": 9,
+    "fields": {
+      "role": 1,
+      "permission": 15
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 10,
+    "fields": {
+      "role": 1,
+      "permission": 16
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 11,
+    "fields": {
+      "role": 1,
+      "permission": 17
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 12,
+    "fields": {
+      "role": 1,
+      "permission": 18
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 13,
+    "fields": {
+      "role": 1,
+      "permission": 19
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 14,
+    "fields": {
+      "role": 1,
+      "permission": 20
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 15,
+    "fields": {
+      "role": 1,
+      "permission": 21
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 16,
+    "fields": {
+      "role": 1,
+      "permission": 22
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 17,
+    "fields": {
+      "role": 2,
+      "permission": 5
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 18,
     "fields": {
       "role": 2,
       "permission": 3
@@ -213,7 +348,7 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 10,
+    "pk": 19,
     "fields": {
       "role": 2,
       "permission": 4
@@ -221,23 +356,15 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 11,
+    "pk": 20,
     "fields": {
       "role": 2,
-      "permission": 7
+      "permission": 8
     }
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 12,
-    "fields": {
-      "role": 2,
-      "permission": 11
-    }
-  },
-  {
-    "model": "user_auth.RolePermissions",
-    "pk": 13,
+    "pk": 21,
     "fields": {
       "role": 2,
       "permission": 12
@@ -245,7 +372,7 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 14,
+    "pk": 22,
     "fields": {
       "role": 2,
       "permission": 13
@@ -253,15 +380,15 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 15,
+    "pk": 23,
     "fields": {
-      "role": 3,
-      "permission": 1
+      "role": 2,
+      "permission": 14
     }
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 16,
+    "pk": 24,
     "fields": {
       "role": 3,
       "permission": 2
@@ -269,7 +396,7 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 17,
+    "pk": 25,
     "fields": {
       "role": 3,
       "permission": 3
@@ -277,15 +404,23 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 18,
+    "pk": 26,
     "fields": {
       "role": 3,
-      "permission": 7
+      "permission": 4
     }
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 19,
+    "pk": 27,
+    "fields": {
+      "role": 3,
+      "permission": 8
+    }
+  },
+  {
+    "model": "user_auth.RolePermissions",
+    "pk": 28,
     "fields": {
       "role": 3,
       "permission": 9
@@ -293,7 +428,7 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 20,
+    "pk": 29,
     "fields": {
       "role": 3,
       "permission": 10
@@ -301,17 +436,9 @@
   },
   {
     "model": "user_auth.RolePermissions",
-    "pk": 21,
+    "pk": 30,
     "fields": {
       "role": 3,
-      "permission": 11
-    }
-  },
-  {
-    "model": "user_auth.RolePermissions",
-    "pk": 22,
-    "fields": {
-      "role": 4,
       "permission": 11
     }
   },
@@ -349,18 +476,6 @@
       "password": "$2b$12$j8xw81zUj3Uz7KwW88ObX.v//D4sXwYWoIKcSb5hJsNIcCu07VKdW",
       "created_at": "2026-03-18T22:00:59Z",
       "role": 3
-    }
-  },
-  {
-    "model": "user_auth.User",
-    "pk": 4,
-    "fields": {
-      "first_name": "Елена",
-      "last_name": "Козлова",
-      "email": "elena.kozlova@example.com",
-      "password": "$2b$12$j8xw81zUj3Uz7KwW88ObX.v//D4sXwYWoIKcSb5hJsNIcCu07VKdW",
-      "created_at": "2026-03-18T22:00:59Z",
-      "role": 4
     }
   }
 ]

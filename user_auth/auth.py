@@ -1,8 +1,9 @@
 import uuid
 from datetime import timedelta, datetime, timezone
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import jwt
+from jwt import ExpiredSignatureError, InvalidTokenError
 
 from effective_mobile_task import settings
 from user_auth.models import RefreshToken, User
@@ -25,24 +26,26 @@ def get_sub(token: str) -> str:
 
 
 def sign_token(
-    typ: str, subject: str, ttl: timedelta = None, payload: Dict[str, Any] = None
+    typ: str,
+    subject: str,
+    ttl: Optional[timedelta] = None,
+    payload: Optional[Dict[str, Any]] = None,
 ) -> str:
-    if payload is None:
-        payload = {}
-
     base = dict(payload or {})
-
-    current_timestamp = datetime.now(tz=timezone.utc).timestamp()
+    now = datetime.now(tz=timezone.utc)
 
     data = dict(
         iss=settings.JWT_ISSUER,
         sub=subject,
         type=typ,
         jti=generate_jti(),
-        iat=current_timestamp,
-        nbf=payload["nbf"] if payload.get("nbf") else current_timestamp,
+        iat=int(now.timestamp()),
+        nbf=base.get("nbf", int(now.timestamp())),
     )
-    data.update(dict(exp=data["nbf"] + int(ttl.total_seconds()))) if ttl else None
+
+    if ttl is not None:
+        exp = now + ttl
+        data["exp"] = exp
     base.update(data)
 
     return jwt.encode(
@@ -51,22 +54,36 @@ def sign_token(
 
 
 def generate_access_token(
-    subject: str, ttl: timedelta = None, payload: Dict[str, Any] = None
+    subject: str,
+    ttl: Optional[timedelta] = None,
+    payload: Optional[Dict[str, Any]] = None,
 ) -> str:
     return sign_token(TokenType.ACCESS.value, subject, ttl, payload)
 
 
 def generate_refresh_token(
-    subject: str, ttl: timedelta = None, payload: Dict[str, Any] = None
+    subject: str,
+    ttl: Optional[timedelta] = None,
+    payload: Optional[Dict[str, Any]] = None,
 ) -> str:
     refresh_token = sign_token(TokenType.REFRESH.value, subject, ttl, payload)
-    user = User.objects.get(pk=subject)
+    try:
+        user = User.objects.get(pk=subject)
+    except User.DoesNotExist:
+        raise exceptions.AuthenticationFailed("User not found")
     RefreshToken.objects.create(jti=get_jti(refresh_token), subject=user)
     return refresh_token
 
 
 def get_payload(token: str) -> Dict[str, Any]:
-    return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+    try:
+        return jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
+    except ExpiredSignatureError:
+        raise exceptions.AuthenticationFailed("Token has expired")
+    except InvalidTokenError:
+        raise exceptions.AuthenticationFailed("Invalid token")
 
 
 def get_user(token: str) -> User:
@@ -81,7 +98,9 @@ def extract_token(headers: Dict[str, str]) -> str:
         raise exceptions.AuthenticationFailed("Authorization header is required")
 
     if not auth_header.startswith("Bearer "):
-        raise exceptions.AuthenticationFailed("Incorrect header format")
+        raise exceptions.AuthenticationFailed(
+            "Authorization header must start with 'Bearer '"
+        )
 
     token = auth_header.removeprefix("Bearer ").strip()
     return token

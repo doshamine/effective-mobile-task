@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from mock.models import Item
-from user_auth.models import User
 
 
 class ItemSerializer(serializers.ModelSerializer):

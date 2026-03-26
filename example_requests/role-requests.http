@@ -1,0 +1,41 @@
+@BASE_URL = http://localhost:8000/api/v1
+@ACCESS_TOKEN = access
+@REFRESH_TOKEN = refresh
+
+###
+
+POST {{BASE_URL}}/roles/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "name": "robot",
+  "display_name": "робот",
+  "description": "Роль робота",
+  "permissions": [1, 4, 9]
+}
+
+###
+
+GET {{BASE_URL}}/roles/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+GET {{BASE_URL}}/roles/1/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+PATCH {{BASE_URL}}/roles/5/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "description": "Очень важная роль робота"
+}
+
+###
+
+DELETE {{BASE_URL}}/roles/4/
+Authorization: Bearer {{ACCESS_TOKEN}}

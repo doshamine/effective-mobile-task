@@ -1,0 +1,38 @@
+@BASE_URL = http://localhost:8000/api/v1
+@ACCESS_TOKEN = access
+@REFRESH_TOKEN = refresh
+
+###
+
+POST {{BASE_URL}}/items/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "name": "objects4"
+}
+
+###
+
+GET {{BASE_URL}}/items/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+GET {{BASE_URL}}/items/3/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+PATCH {{BASE_URL}}/items/1/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "name": ":-)"
+}
+
+###
+
+DELETE {{BASE_URL}}/items/5/
+Authorization: Bearer {{ACCESS_TOKEN}}

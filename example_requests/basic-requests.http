@@ -1,0 +1,55 @@
+@BASE_URL = http://localhost:8000/api/v1
+@ACCESS_TOKEN = access
+@REFRESH_TOKEN = refresh
+
+
+POST {{BASE_URL}}/register/
+Content-Type: application/json
+
+{
+  "first_name": "Даша",
+  "last_name": "Сергеичева",
+  "email": "dasha.sergeicheva@example.com",
+  "password": "123",
+  "password_confirm": "123"
+}
+
+###
+
+POST {{BASE_URL}}/login/
+Content-Type: application/json
+
+{
+  "email": "darya.sergeicheva@example.com",
+  "password": "1234"
+}
+
+###
+
+POST {{BASE_URL}}/refresh/
+Content-Type: application/json
+
+{
+  "refresh_token": "{{REFRESH_TOKEN}}"
+}
+
+###
+
+PATCH {{BASE_URL}}/update/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "password": "1234",
+  "password_confirm": "1234"
+}
+
+###
+
+DELETE {{BASE_URL}}/delete/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+POST {{BASE_URL}}/logout/
+Authorization: Bearer {{ACCESS_TOKEN}}

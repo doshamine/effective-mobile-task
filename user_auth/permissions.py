@@ -2,18 +2,8 @@ from typing import List
 
 from rest_framework.permissions import BasePermission
 from effective_mobile_task import settings
-
-paths = {
-    "user": "users",
-    "item": "items",
-}
-
-methods = {
-    "create": "POST",
-    "read": "GET",
-    "update": "PATCH",
-    "delete": "DELETE",
-}
+from user_auth.mappings import PATHS, METHODS
+from user_auth.models import User
 
 
 def parse_permission(permission: str) -> List[str]:
@@ -29,9 +19,9 @@ class RolePermission(BasePermission):
         for permission in user.role.permissions.all():
             permission_parts = parse_permission(permission.name)
             obj = permission_parts[0]
-            operation = permission_parts[-1]
+            operation = permission_parts[1]
 
-            if paths[obj] in path and methods[operation] == method:
+            if PATHS[obj] in path and METHODS[operation] == method:
                 return True
 
         return False
@@ -40,11 +30,12 @@ class RolePermission(BasePermission):
         user = request.user
 
         for permission in user.role.permissions.all():
-            belongs = parse_permission(permission.name)[1]
-
-            if belongs == "all":
+            permission_parts = parse_permission(permission.name)
+            if len(permission_parts) < 3:
                 return True
-            if belongs == "own":
+            elif isinstance(obj, User):
+                return obj.id == user.id
+            else:
                 return obj.owner == user
 
         return False

@@ -1,0 +1,39 @@
+@BASE_URL = http://localhost:8000/api/v1
+@ACCESS_TOKEN = access
+@REFRESH_TOKEN = refresh
+
+###
+
+POST {{BASE_URL}}/permissions/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+    "name": "test:update:own",
+    "description": "Тест создания нового разрешения"
+}
+
+###
+
+GET {{BASE_URL}}/permissions/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+GET {{BASE_URL}}/permissions/1/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+PATCH {{BASE_URL}}/permissions/23/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "description": "Обновленное описание тестового разрешения"
+}
+
+###
+
+DELETE {{BASE_URL}}/permissions/23/
+Authorization: Bearer {{ACCESS_TOKEN}}

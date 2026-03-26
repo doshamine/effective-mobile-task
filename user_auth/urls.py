@@ -8,11 +8,13 @@ from user_auth.views import (
     RegisterUserView,
     UpdateUserView,
     DeleteUserView,
-    UserViewSet,
+    UserViewSet, RoleViewSet, PermissionViewSet,
 )
 
 router = DefaultRouter()
 router.register(r"users", UserViewSet, basename="users")
+router.register(r"roles", RoleViewSet, basename="roles")
+router.register(r"permissions", PermissionViewSet, basename="permissions")
 
 urlpatterns = [
     path("register/", RegisterUserView.as_view(), name="register"),

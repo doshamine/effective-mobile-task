@@ -1,0 +1,43 @@
+@BASE_URL = http://localhost:8000/api/v1
+@ACCESS_TOKEN = access
+@REFRESH_TOKEN = refresh
+
+###
+
+GET {{BASE_URL}}/users/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+GET {{BASE_URL}}/users/6/
+Authorization: Bearer {{ACCESS_TOKEN}}
+
+###
+
+PATCH {{BASE_URL}}/users/5/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "first_name": "Людочка",
+  "role": 1
+}
+
+###
+
+POST {{BASE_URL}}/users/
+Authorization: Bearer {{ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "first_name": "Люд",
+  "last_name": "Петрова",
+  "email": "ludaaaa.petrova@example.com",
+  "password": "123",
+  "role": 2
+}
+
+###
+
+DELETE {{BASE_URL}}/users/8/
+Authorization: Bearer {{ACCESS_TOKEN}}
