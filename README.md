@@ -61,5 +61,5 @@ docker compose down
 
 ### Схема базы данных
 
-![Схема базы данных](https://github.com/doshamine/effective-mobile-task/ER_diagram.png)
+![Схема базы данных](ER_diagram.png)
 
