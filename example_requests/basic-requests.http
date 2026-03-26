@@ -20,8 +20,8 @@ POST {{BASE_URL}}/login/
 Content-Type: application/json
 
 {
-  "email": "darya.sergeicheva@example.com",
-  "password": "1234"
+  "email": "dasha.sergeicheva@example.com",
+  "password": "123"
 }
 
 ###

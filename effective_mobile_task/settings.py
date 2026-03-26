@@ -23,8 +23,8 @@ BASE_ROUTE = "api/v1/"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-DEFAULT_ROLE = os.environ.get("DEFAULT_ROLE")
-PERMISSION_SEPARATOR = os.environ.get("PERMISSION_SEPARATOR")
+DEFAULT_ROLE = os.environ.get("DEFAULT_ROLE", "user")
+PERMISSION_SEPARATOR = os.environ.get("PERMISSION_SEPARATOR", ":")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
@@ -90,9 +90,9 @@ WSGI_APPLICATION = "effective_mobile_task.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME"),
-        "USER": os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "NAME": os.environ.get("DB_NAME", "auth_db"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "123"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "5432"),
     }
